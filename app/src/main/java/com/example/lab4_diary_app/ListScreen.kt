@@ -19,14 +19,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lab4_diary_app.data.DiaryItem
+import com.example.lab4_diary_app.viewmodel.ListViewModel
 
 @Composable
-fun ListScreen(items: List<DiaryItem>, onItemClick: (DiaryItem) -> Unit) {
+fun ListScreen(modifier: Modifier = Modifier, viewModel: ListViewModel = viewModel(), onItemClick: (DiaryItem) -> Unit) {
+    val items by viewModel.items.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+
     var filter by remember { mutableStateOf(ListFilter.ALL) }
 
     val filteredItems by remember(items, filter) {
         derivedStateOf {
-            when(filter) {
+            when (filter) {
                 ListFilter.ALL -> items
                 ListFilter.SHORT -> items.filter { it.title.length <= 7 }
                 ListFilter.LONG -> items.filter { it.title.length > 7 }
@@ -34,8 +41,8 @@ fun ListScreen(items: List<DiaryItem>, onItemClick: (DiaryItem) -> Unit) {
         }
     }
 
-    Column {
-        Row (modifier = Modifier.padding(16.dp)){
+    Column(modifier = modifier) {
+        Row(modifier = Modifier.padding(16.dp)) {
             Button(onClick = { filter = ListFilter.ALL }) { Text("Всі") }
             Button(onClick = { filter = ListFilter.SHORT }) { Text("Короткі") }
             Button(onClick = { filter = ListFilter.LONG }) { Text("Довгі") }
@@ -43,17 +50,21 @@ fun ListScreen(items: List<DiaryItem>, onItemClick: (DiaryItem) -> Unit) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(modifier = Modifier.padding(16.dp)) {
-            items(filteredItems) { item ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    onClick = { onItemClick(item) }
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(item.title)
-                        Text(item.description)
+        if (isLoading) {
+            Text("Завантаження...", modifier = Modifier.padding(16.dp))
+        } else {
+            LazyColumn(modifier = Modifier.padding(16.dp)) {
+                items(filteredItems) { item ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        onClick = { onItemClick(item) }
+                    ) {
+                        Column(Modifier.padding(16.dp)) {
+                            Text(item.title)
+                            Text(item.description)
+                        }
                     }
                 }
             }

@@ -20,42 +20,53 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lab4_diary_app.data.DiaryItem
+import com.example.lab4_diary_app.viewmodel.ListViewModel
 
 @Composable
-fun GridScreen(items: List<DiaryItem>, onItemClick: (DiaryItem) -> Unit) {
+fun GridScreen(modifier: Modifier = Modifier, viewModel: ListViewModel = viewModel(), onItemClick: (DiaryItem) -> Unit) {
+    val items by viewModel.items.collectAsStateWithLifecycle()
+    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
+
     var sort by remember { mutableStateOf(GridSort.ASC) }
 
     val sortedItems by remember(items, sort) {
         derivedStateOf {
-            when(sort) {
+            when (sort) {
                 GridSort.ASC -> items.sortedBy { it.title }
                 GridSort.DESC -> items.sortedByDescending { it.title }
             }
         }
     }
 
-    Column {
-        Row (modifier = Modifier.padding(16.dp)){
+    Column(modifier = modifier) {
+        Row(modifier = Modifier.padding(16.dp)) {
             Button(onClick = { sort = GridSort.ASC }) { Text("A-Z") }
             Button(onClick = { sort = GridSort.DESC }) { Text("Z-A") }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(16.dp)
-        ) {
-            items(sortedItems) { item ->
-                Card(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    onClick = { onItemClick(item) }
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(item.title)
-                        Text(item.description)
+        if (isLoading) {
+            Text("Завантаження...", modifier = Modifier.padding(16.dp))
+        } else {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                items(sortedItems) { item ->
+                    Card(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        onClick = { onItemClick(item) }
+                    ) {
+                        Column(Modifier.padding(16.dp)) {
+                            Text(item.title)
+                            Text(item.description)
+                        }
                     }
                 }
             }

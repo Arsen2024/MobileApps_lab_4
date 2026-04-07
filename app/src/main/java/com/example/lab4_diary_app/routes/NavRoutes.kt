@@ -1,4 +1,4 @@
-package com.example.lab4_diary_app.Routes
+package com.example.lab4_diary_app.routes
 
 sealed class Screen(val route: String) {
     object Onboarding: Screen("onboarding")

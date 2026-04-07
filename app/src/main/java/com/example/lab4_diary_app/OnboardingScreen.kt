@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.lab4_diary_app.Routes.Screen
+import com.example.lab4_diary_app.routes.Screen
 
 @Composable
 fun OnboardingScreen(navController: NavController) {

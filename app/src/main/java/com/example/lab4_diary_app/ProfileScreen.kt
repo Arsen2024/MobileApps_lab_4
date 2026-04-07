@@ -8,12 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.lab4_diary_app.viewmodel.ProfileViewModel
+import com.example.lab4_diary_app.viewmodel.ProfileViewModelFactory
 
 @Composable
-fun ProfileScreen(userName: String, onNameChange: (String) -> Unit) {
+fun ProfileScreen(modifier: Modifier = Modifier, initialName: String = "", viewModel: ProfileViewModel = viewModel(factory = ProfileViewModelFactory(initialName))) {
+    val name by viewModel.name.collectAsStateWithLifecycle()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -27,8 +34,8 @@ fun ProfileScreen(userName: String, onNameChange: (String) -> Unit) {
         Spacer(Modifier.height(24.dp))
 
         OutlinedTextField(
-            value = userName,
-            onValueChange = onNameChange,
+            value = name,
+            onValueChange = { viewModel.updateName(it) },
             label = { Text("Ваше ім'я") }
         )
     }

@@ -16,30 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-
-data class DiaryItem(val title: String, val description: String)
 
 @Composable
-fun MainScreen(userName: String) {
+fun MainScreen(userName: String, onOpenDetails: (Int) -> Unit) {
     var selectedTab by remember { mutableStateOf(MainTab.LIST) }
-    val navController = rememberNavController()
-    var userName by remember { mutableStateOf(userName) }
-
-    val items = remember {
-        listOf(
-            DiaryItem("Запис 1", "Опис 1"),
-            DiaryItem("Запис 2", "Опис 2"),
-            DiaryItem("Запис 3", "Опис 3"),
-            DiaryItem("Запис 4", "Опис 4"),
-            DiaryItem("Запис 5", "Опис 5"),
-            DiaryItem("Запис 6", "Опис 6")
-        )
-    }
 
     Scaffold(
         bottomBar = {
@@ -66,35 +46,16 @@ fun MainScreen(userName: String) {
         }
     ) { padding ->
 
-        NavHost(
-            navController =  navController,
-            startDestination = "tabs",
-            modifier = Modifier.padding(padding)
-        ) {
-            composable("tabs") {
-                when(selectedTab) {
-                    MainTab.LIST -> ListScreen(items) { item ->
-                        navController.navigate("details/${item.title}/${item.description}")
-                    }
-                    MainTab.GRID -> GridScreen(items) { item ->
-                        navController.navigate("details/${item.title}/${item.description}")
-                    }
-                    MainTab.PROFILE -> ProfileScreen(userName = userName, onNameChange = { userName = it })
-                }
-            }
-
-            composable(
-                route = "details/{title}/{description}",
-                arguments = listOf(
-                    navArgument("title") { type = NavType.StringType },
-                    navArgument("description") { type = NavType.StringType }
-                )
-                ) { backStackEntry ->
-                val title = backStackEntry.arguments?.getString("title") ?: ""
-                val description = backStackEntry.arguments?.getString("description") ?: ""
-
-                DetailScreen(title, description)
-            }
+        when (selectedTab) {
+            MainTab.LIST -> ListScreen(
+                onItemClick = { item -> onOpenDetails(item.id) },
+                modifier = Modifier.padding(padding)
+            )
+            MainTab.GRID -> GridScreen(
+                onItemClick = { item -> onOpenDetails(item.id) },
+                modifier = Modifier.padding(padding)
+            )
+            MainTab.PROFILE -> ProfileScreen(modifier = Modifier.padding(padding), initialName = userName)
         }
     }
 }
