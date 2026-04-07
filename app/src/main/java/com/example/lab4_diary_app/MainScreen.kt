@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun MainScreen(userName: String, onOpenDetails: (Int) -> Unit) {
@@ -27,19 +28,19 @@ fun MainScreen(userName: String, onOpenDetails: (Int) -> Unit) {
                 NavigationBarItem(
                     selected = selectedTab == MainTab.LIST,
                     onClick = { selectedTab = MainTab.LIST },
-                    label = { Text(MainTab.LIST.title) },
+                    label = { Text(MainTab.LIST.title, style = MaterialTheme.typography.labelSmall) },
                     icon = { Icon(Icons.AutoMirrored.Filled.List, null) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == MainTab.GRID,
                     onClick = { selectedTab = MainTab.GRID },
-                    label = { Text(MainTab.GRID.title) },
+                    label = { Text(MainTab.GRID.title, style = MaterialTheme.typography.labelSmall) },
                     icon = { Icon(Icons.Default.GridOn, null) }
                 )
                 NavigationBarItem(
                     selected = selectedTab == MainTab.PROFILE,
                     onClick = { selectedTab = MainTab.PROFILE },
-                    label = { Text(MainTab.PROFILE.title) },
+                    label = { Text(MainTab.PROFILE.title, style = MaterialTheme.typography.labelSmall) },
                     icon = { Icon(Icons.Default.Person, null) }
                 )
             }

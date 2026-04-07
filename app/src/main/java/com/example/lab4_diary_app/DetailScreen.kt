@@ -3,6 +3,7 @@ package com.example.lab4_diary_app
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,16 +25,36 @@ fun DetailScreen(itemId: Int, repository: AppRepository) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        is DetailState.Loading -> CircularProgressIndicator()
+        is DetailState.Loading -> {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
         is DetailState.Success -> {
             val item = (state as DetailState.Success).item
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = item.title, modifier = Modifier.padding(bottom = 8.dp))
-                Text(text = item.description)
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
+                Text(
+                    text = item.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
         }
         is DetailState.Error -> {
-            Text((state as DetailState.Error).message)
+            Text(
+                text = (state as DetailState.Error).message,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.error
+            )
         }
     }
 
