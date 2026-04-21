@@ -10,31 +10,37 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.lab4_diary_app.routes.Screen
+import com.example.lab4_diary_app.viewmodel.SettingsViewModel
 
 @Composable
-fun OnboardingScreen(navController: NavController) {
-    var userName by remember { mutableStateOf("") }
+fun OnboardingScreen(navController: NavController, settingsViewModel: SettingsViewModel) {
+    val name by settingsViewModel.userName.collectAsStateWithLifecycle()
 
-    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-    val nameFromBack by savedStateHandle
-        ?.getStateFlow("userName", "")
-        ?.collectAsState() ?: remember { mutableStateOf("") }
-
-    if(nameFromBack.isNotEmpty()) {
-        userName = nameFromBack
+    LaunchedEffect(name) {
+        if (name.isNotBlank()) {
+            navController.navigate(Screen.Main.createRoute(name)) {
+                popUpTo(Screen.Onboarding.route) { inclusive = true }
+            }
+        }
     }
 
+    OnboardingContent(
+        onEnterNameClick = {
+            navController.navigate(Screen.EnterName.route)
+        }
+    )
+}
+
+@Composable
+fun OnboardingContent(onEnterNameClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -46,27 +52,8 @@ fun OnboardingScreen(navController: NavController) {
 
         Spacer(Modifier.height(32.dp))
 
-        Button(onClick = {
-            navController.navigate(Screen.EnterName.route)
-        }) {
+        Button(onClick = onEnterNameClick) {
             Text("Ввести ім'я", style = MaterialTheme.typography.titleMedium)
         }
-
-        Spacer(Modifier.height(16.dp))
-
-        Button(onClick = {
-            navController.navigate(Screen.Main.createRoute(userName)) {
-                popUpTo(Screen.Onboarding.route){
-                    inclusive = true
-                }
-            }
-        }, enabled = userName.isNotBlank()
-        ) {
-            Text(
-                if(userName.isBlank()) "Розпочати" else "Привіт, $userName! Розпочати",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
     }
-
 }

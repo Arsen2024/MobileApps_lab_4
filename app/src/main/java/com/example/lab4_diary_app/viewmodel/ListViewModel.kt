@@ -2,29 +2,44 @@ package com.example.lab4_diary_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.lab4_diary_app.SortOrder
 import com.example.lab4_diary_app.data.AppRepository
 import com.example.lab4_diary_app.data.DiaryItem
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.example.lab4_diary_app.data.preferences.UserPreferencesRepository
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class ListViewModel(private val repository: AppRepository = AppRepository()) : ViewModel() {
-    private val _isLoading = MutableStateFlow(true)
-    val isLoading: StateFlow<Boolean> = _isLoading
+class ListViewModel(private val repository: AppRepository, preferences: UserPreferencesRepository) : ViewModel() {
+    val items: StateFlow<List<DiaryItem>> =
+        combine(
+            repository.getAllItems(),
+            preferences.sortOrderFlow,
+            preferences.showOnlyFavoritesFlow,
+        ) { items, sort, onlyFav ->
+            var result = items
 
-    private val _items = MutableStateFlow<List<DiaryItem>>(emptyList())
-    val items: StateFlow<List<DiaryItem>> = _items
+            if(onlyFav) {
+                result = result.filter { it.isFavorite }
+            }
 
-    init {
-        loadItems()
-    }
+            result = when (sort) {
+                SortOrder.NEWEST -> result.sortedByDescending { it.createdAt }
+                SortOrder.OLDEST -> result.sortedBy { it.createdAt }
+            }
 
-    private fun loadItems() {
+            result
+        }.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(5000),
+                emptyList()
+            )
+
+    fun toggleFavorite(item: DiaryItem) {
         viewModelScope.launch {
-            delay(700)
-            _items.value = repository.getAllItems()
-            _isLoading.value = false
+            repository.setFavorite(item.id, !item.isFavorite)
         }
     }
 }

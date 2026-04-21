@@ -18,9 +18,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.lab4_diary_app.routes.Screen
+import com.example.lab4_diary_app.viewmodel.SettingsViewModel
 
 @Composable
-fun EnterNameScreen(navController: NavController) {
+fun EnterNameScreen(navController: NavController, settingsViewModel: SettingsViewModel) {
     var name by remember { mutableStateOf("") }
 
     Column(
@@ -43,10 +45,10 @@ fun EnterNameScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(onClick = {
-            navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.set("userName", name)
-            navController.popBackStack()
+            settingsViewModel.saveName(name)
+            navController.navigate(Screen.Main.createRoute(name)) {
+                popUpTo(Screen.Onboarding.route) { inclusive = true }
+            }
         }, enabled = name.isNotBlank()
         ) {
             Text("Зберегти")

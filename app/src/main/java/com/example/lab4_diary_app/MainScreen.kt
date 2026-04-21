@@ -17,9 +17,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
+import com.example.lab4_diary_app.viewmodel.ListViewModel
+import com.example.lab4_diary_app.viewmodel.SettingsViewModel
 
 @Composable
-fun MainScreen(userName: String, onOpenDetails: (Int) -> Unit) {
+fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewModel, onOpenDetails: (Int) -> Unit) {
     var selectedTab by remember { mutableStateOf(MainTab.LIST) }
 
     Scaffold(
@@ -49,14 +51,16 @@ fun MainScreen(userName: String, onOpenDetails: (Int) -> Unit) {
 
         when (selectedTab) {
             MainTab.LIST -> ListScreen(
+                viewModel = listViewModel,
                 onItemClick = { item -> onOpenDetails(item.id) },
                 modifier = Modifier.padding(padding)
             )
             MainTab.GRID -> GridScreen(
+                viewModel = listViewModel,
                 onItemClick = { item -> onOpenDetails(item.id) },
                 modifier = Modifier.padding(padding)
             )
-            MainTab.PROFILE -> ProfileScreen(modifier = Modifier.padding(padding), initialName = userName)
+            MainTab.PROFILE -> ProfileScreen(modifier = Modifier.padding(padding), settingsViewModel = settingsViewModel)
         }
     }
 }

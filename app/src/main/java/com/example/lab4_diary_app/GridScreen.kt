@@ -1,5 +1,6 @@
 package com.example.lab4_diary_app
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,20 +22,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lab4_diary_app.data.DiaryItem
 import com.example.lab4_diary_app.viewmodel.ListViewModel
 
 @Composable
-fun GridScreen(modifier: Modifier = Modifier, viewModel: ListViewModel = viewModel(), onItemClick: (DiaryItem) -> Unit) {
+fun GridScreen(modifier: Modifier = Modifier, viewModel: ListViewModel, onItemClick: (DiaryItem) -> Unit) {
     val items by viewModel.items.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
 
-    var sort by remember { mutableStateOf(GridSort.ASC) }
+    var sort by remember { mutableStateOf(GridSort.NONE) }
 
     val sortedItems by remember(items, sort) {
         derivedStateOf {
             when (sort) {
+                GridSort.NONE -> items
                 GridSort.ASC -> items.sortedBy { it.title }
                 GridSort.DESC -> items.sortedByDescending { it.title }
             }
@@ -49,9 +49,6 @@ fun GridScreen(modifier: Modifier = Modifier, viewModel: ListViewModel = viewMod
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (isLoading) {
-            Text("Завантаження...", modifier = Modifier.padding(16.dp))
-        } else {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(2),
                 modifier = Modifier.padding(16.dp)
@@ -64,12 +61,20 @@ fun GridScreen(modifier: Modifier = Modifier, viewModel: ListViewModel = viewMod
                         onClick = { onItemClick(item) }
                     ) {
                         Column(Modifier.padding(16.dp)) {
-                            Text(item.title)
+                            Row {
+                                Text(item.title)
+
+                                Text(
+                                    text = if (item.isFavorite) "⭐" else "☆",
+                                    modifier = Modifier.clickable {
+                                        viewModel.toggleFavorite(item)
+                                    }
+                                )
+                            }
                             Text(item.description)
                         }
                     }
                 }
             }
-        }
     }
 }
