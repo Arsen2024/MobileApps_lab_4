@@ -1,6 +1,6 @@
-package com.example.lab4_diary_app.data
+package com.example.lab4_diary_app.network
 
-data class DiaryItem(
+data class DiaryDto(
     val id: String,
     val title: String,
     val description: String,

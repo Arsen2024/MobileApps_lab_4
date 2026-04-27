@@ -6,4 +6,5 @@ sealed class Screen(val route: String) {
     object Main: Screen("main/{userName}"){
         fun createRoute(userName: String) = "main/$userName"
     }
+    object Add : Screen("add")
 }

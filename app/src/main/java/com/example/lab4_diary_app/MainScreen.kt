@@ -16,15 +16,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.navigation.NavController
+import com.example.lab4_diary_app.routes.Screen
 import com.example.lab4_diary_app.viewmodel.ListViewModel
 import com.example.lab4_diary_app.viewmodel.SettingsViewModel
 
 @Composable
-fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewModel, onOpenDetails: (Int) -> Unit) {
+fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewModel, navController: NavController, onOpenDetails: (String) -> Unit) {
     var selectedTab by remember { mutableStateOf(MainTab.LIST) }
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navController.navigate(Screen.Add.route) }
+            ) {
+                Text("+")
+            }
+        },
         bottomBar = {
             NavigationBar{
                 NavigationBarItem(

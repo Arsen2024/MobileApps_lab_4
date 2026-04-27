@@ -14,16 +14,25 @@ interface DiaryDao {
     fun getAllEntries(): Flow<List<DiaryEntity>>
 
     @Query("SELECT * FROM diary WHERE id = :id")
-    fun getById(id: Int): Flow<DiaryEntity?>
+    fun getById(id: String): Flow<DiaryEntity?>
 
     @Query("UPDATE diary SET isFavorite = :value WHERE id = :id")
-    suspend fun setFavorite(id: Int, value: Boolean)
+    suspend fun setFavorite(id: String, value: Boolean)
 
     @Query("SELECT * FROM diary WHERE isFavorite = 1 ORDER BY createdAt DESC")
     fun getFavoriteEntries(): Flow<List<DiaryEntity>>
 
+    @Query("DELETE FROM diary")
+    suspend fun clear()
+
+    @Query("DELETE FROM diary WHERE id = :id")
+    suspend fun deleteById(id: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertEntry(entry: DiaryEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(items: List<DiaryEntity>)
 
     @Delete
     suspend fun deleteEntry(entry: DiaryEntity)

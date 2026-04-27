@@ -12,6 +12,7 @@ import androidx.navigation.navArgument
 import com.example.lab4_diary_app.data.AppRepository
 import com.example.lab4_diary_app.data.local.DiaryDatabase
 import com.example.lab4_diary_app.data.preferences.UserPreferencesRepository
+import com.example.lab4_diary_app.network.RetrofitInstance
 import com.example.lab4_diary_app.routes.Screen
 import com.example.lab4_diary_app.viewmodel.ListViewModel
 import com.example.lab4_diary_app.viewmodel.ListViewModelFactory
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
             Lab4_diary_appTheme {
                 val navController = rememberNavController()
                 val database = DiaryDatabase.getDatabase(this)
-                val repository = AppRepository(database.diaryDao())
+                val repository = AppRepository(database.diaryDao(), RetrofitInstance.api)
                 val preferences = UserPreferencesRepository(applicationContext)
 
                 val settingsViewModel: SettingsViewModel = viewModel(
@@ -67,6 +68,7 @@ class MainActivity : ComponentActivity() {
                         MainScreen(
                             settingsViewModel = settingsViewModel,
                             listViewModel = listViewModel,
+                            navController = navController,
                             onOpenDetails = { id ->
                                 navController.navigate("details/$id")
                             }
@@ -76,14 +78,21 @@ class MainActivity : ComponentActivity() {
                     composable(
                         route = "details/{id}",
                         arguments = listOf(
-                            navArgument("id") { type = NavType.IntType }
+                            navArgument("id") { type = NavType.StringType }
                         )
                     ) { backStackEntry ->
-                        val id = backStackEntry.arguments?.getInt("id") ?: 0
+                        val id = backStackEntry.arguments?.getString("id") ?: ""
 
                         DetailScreen(
                             itemId = id,
                             repository = repository
+                        )
+                    }
+
+                    composable(Screen.Add.route) {
+                        AddScreen(
+                            viewModel = listViewModel,
+                            onBack = { navController.popBackStack() }
                         )
                     }
             }

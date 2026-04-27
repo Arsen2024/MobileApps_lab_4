@@ -5,10 +5,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "diary")
 data class DiaryEntity(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String,
     val title: String,
     val description: String,
     val isFavorite: Boolean = false,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long
 )

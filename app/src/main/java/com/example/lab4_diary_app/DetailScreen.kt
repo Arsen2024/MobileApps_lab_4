@@ -17,7 +17,7 @@ import com.example.lab4_diary_app.viewmodel.DetailViewModel
 import com.example.lab4_diary_app.viewmodel.DetailViewModelFactory
 
 @Composable
-fun DetailScreen(itemId: Int, repository: AppRepository) {
+fun DetailScreen(itemId: String, repository: AppRepository) {
     val viewModel: DetailViewModel = viewModel(
         factory = DetailViewModelFactory(repository, itemId)
     )
@@ -25,11 +25,43 @@ fun DetailScreen(itemId: Int, repository: AppRepository) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (state) {
-        is DetailState.Loading -> {
-            CircularProgressIndicator(
-                color = MaterialTheme.colorScheme.primary
-            )
+        DetailState.Loading -> {
+            Column(
+                modifier = Modifier
+                    .padding(32.dp),
+            ) {
+                CircularProgressIndicator()
+                Text(
+                    "Завантаження...",
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
         }
+
+        is DetailState.Error -> {
+            val message = (state as DetailState.Error).message
+
+            Column(Modifier.padding(16.dp)) {
+                Text(
+                    "Помилка: $message",
+                    color = MaterialTheme.colorScheme.error
+                )
+
+                Text(
+                    "Спробуйте ще раз",
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                )
+
+                androidx.compose.material3.Button(
+                    onClick = { viewModel.retry() },
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text("Retry")
+                }
+            }
+        }
+
         is DetailState.Success -> {
             val item = (state as DetailState.Success).item
             Column(
@@ -49,13 +81,7 @@ fun DetailScreen(itemId: Int, repository: AppRepository) {
                 )
             }
         }
-        is DetailState.Error -> {
-            Text(
-                text = (state as DetailState.Error).message,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.error
-            )
-        }
+
     }
 
 }
