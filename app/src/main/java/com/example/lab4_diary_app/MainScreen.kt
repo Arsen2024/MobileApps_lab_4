@@ -18,16 +18,35 @@ import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.windowsizeclass.WindowSizeClass
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
 import com.example.lab4_diary_app.routes.Screen
 import com.example.lab4_diary_app.viewmodel.ListViewModel
 import com.example.lab4_diary_app.viewmodel.SettingsViewModel
+import com.example.lab4_diary_app.viewmodel.UiEvent
 
 @Composable
-fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewModel, navController: NavController, onOpenDetails: (String) -> Unit) {
+fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewModel, navController: NavController, onOpenDetails: (String) -> Unit, windowSizeClass: WindowSizeClass) {
     var selectedTab by remember { mutableStateOf(MainTab.LIST) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        listViewModel.event.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(event.message)
+                }
+                else -> { }
+            }
+        }
+    }
+
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate(Screen.Add.route) }

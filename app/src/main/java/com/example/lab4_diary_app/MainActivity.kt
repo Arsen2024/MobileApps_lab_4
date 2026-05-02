@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lab4_diary_app.ui.theme.Lab4_diary_appTheme
 import androidx.navigation.NavType
@@ -19,11 +21,14 @@ import com.example.lab4_diary_app.viewmodel.ListViewModelFactory
 import com.example.lab4_diary_app.viewmodel.SettingsViewModel
 import com.example.lab4_diary_app.viewmodel.SettingsViewModelFactory
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val windowSizeClass = calculateWindowSizeClass(this)
+
             Lab4_diary_appTheme {
                 val navController = rememberNavController()
                 val database = DiaryDatabase.getDatabase(this)
@@ -71,7 +76,8 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             onOpenDetails = { id ->
                                 navController.navigate("details/$id")
-                            }
+                            },
+                            windowSizeClass = windowSizeClass
                         )
                     }
 

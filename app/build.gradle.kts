@@ -57,6 +57,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.compose.material3.window.size.class1)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

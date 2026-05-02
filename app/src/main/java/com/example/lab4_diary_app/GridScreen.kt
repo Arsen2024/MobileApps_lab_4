@@ -62,58 +62,82 @@ fun GridScreen(modifier: Modifier = Modifier, viewModel: ListViewModel, onItemCl
             }
 
             is ListState.Offline -> {
-                Text("Немає підключення до мережі", modifier = Modifier.padding(16.dp))
+                val items = (state as ListState.Offline).items
+
+                Column {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                    ) {
+                        Text(
+                            text = "Офлайн режим. Показано кешовані дані",
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+
+                    DiaryGridContent(items, sort, viewModel, onItemClick)
+                }
             }
 
             is ListState.Success -> {
                 val items = (state as ListState.Success).items
 
-                val sortedItems by remember(items, sort) {
-                    derivedStateOf {
-                        when (sort) {
-                            GridSort.NONE -> items
-                            GridSort.ASC -> items.sortedBy { it.title }
-                            GridSort.DESC -> items.sortedByDescending { it.title }
-                        }
-                    }
-                }
+                DiaryGridContent(items, sort, viewModel, onItemClick)
+            }
+        }
+    }
+}
 
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    items(sortedItems) { item ->
-                        Card(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth(),
-                            onClick = { onItemClick(item) }
-                        ) {
-                            Column(Modifier.padding(16.dp)) {
-                                Row {
-                                    Text(item.title)
+@Composable
+private fun DiaryGridContent(
+    items: List<DiaryItem>,
+    sort: GridSort,
+    viewModel: ListViewModel,
+    onItemClick: (DiaryItem) -> Unit
+) {
+    val sortedItems by remember(items, sort) {
+        derivedStateOf {
+            when (sort) {
+                GridSort.NONE -> items
+                GridSort.ASC -> items.sortedBy { it.title }
+                GridSort.DESC -> items.sortedByDescending { it.title }
+            }
+        }
+    }
 
-                                    Spacer(modifier = Modifier.weight(1f))
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.padding(16.dp)
+    ) {
+        items(sortedItems) { item ->
+            Card(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                onClick = { onItemClick(item) }
+            ) {
+                Column(Modifier.padding(16.dp)) {
+                    Row {
+                        Text(item.title)
 
-                                    Text(
-                                        text = if (item.isFavorite) "⭐" else "☆",
-                                        modifier = Modifier.clickable {
-                                            viewModel.toggleFavorite(item)
-                                        }
-                                    )
+                        Spacer(modifier = Modifier.weight(1f))
 
-                                    Text(
-                                        text = "🗑️",
-                                        modifier = Modifier
-                                            .clickable {
-                                                viewModel.deleteItem(item.id)
-                                            }
-                                    )
-                                }
-                                Text(item.description)
+                        Text(
+                            text = if (item.isFavorite) "⭐" else "☆",
+                            modifier = Modifier.clickable {
+                                viewModel.toggleFavorite(item)
                             }
-                        }
+                        )
+
+                        Text(
+                            text = "🗑️",
+                            modifier = Modifier.clickable {
+                                viewModel.deleteItem(item.id)
+                            }
+                        )
                     }
+                    Text(item.description)
                 }
             }
         }

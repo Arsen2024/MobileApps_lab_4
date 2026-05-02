@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,12 +19,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.lab4_diary_app.viewmodel.ListViewModel
+import com.example.lab4_diary_app.viewmodel.UiEvent
 
 @Composable
 fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit) {
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.navigation.collect { event ->
+            when (event) {
+                is UiEvent.NavigateBack -> {
+                    onBack()
+                }
+                else -> {}
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -56,10 +69,8 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit) {
             onClick = {
                 isLoading = true
                 viewModel.addItem(title, description)
-                isLoading = false
-                onBack()
             },
-            enabled = title.isNotBlank() && description.isNotBlank()
+            enabled = title.isNotBlank() && description.isNotBlank() && !isLoading
         ) {
             if (isLoading) {
                 Text("Збереження...")
