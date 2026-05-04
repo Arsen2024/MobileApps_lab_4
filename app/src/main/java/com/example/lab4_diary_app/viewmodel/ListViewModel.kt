@@ -27,7 +27,7 @@ sealed interface UiEvent {
     object NavigateBack : UiEvent
 }
 
-class ListViewModel(private val repository: AppRepository, private val preferences: UserPreferencesRepository) : ViewModel() {
+class ListViewModel(val repository: AppRepository, private val preferences: UserPreferencesRepository) : ViewModel() {
 
     private val _state = MutableStateFlow<ListState>(ListState.Loading)
     val state: StateFlow<ListState> = _state
@@ -105,7 +105,7 @@ class ListViewModel(private val repository: AppRepository, private val preferenc
         }
     }
 
-    fun addItem(title: String, description: String) {
+    fun addItem(title: String, description: String, isFavorite: Boolean, priority: Int, category: String, mood: Int) {
         viewModelScope.launch {
             try {
                 repository.addRemote(
@@ -113,8 +113,11 @@ class ListViewModel(private val repository: AppRepository, private val preferenc
                         id = "",
                         title = title,
                         description = description,
-                        isFavorite = false,
-                        createdAt = System.currentTimeMillis()
+                        isFavorite = isFavorite,
+                        createdAt = System.currentTimeMillis(),
+                        priority = priority,
+                        category = category,
+                        mood = mood
                     )
                 )
 

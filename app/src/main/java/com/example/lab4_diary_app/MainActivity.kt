@@ -98,7 +98,8 @@ class MainActivity : ComponentActivity() {
                     composable(Screen.Add.route) {
                         AddScreen(
                             viewModel = listViewModel,
-                            onBack = { navController.popBackStack() }
+                            onBack = { navController.popBackStack() },
+                            windowSizeClass = windowSizeClass
                         )
                     }
             }

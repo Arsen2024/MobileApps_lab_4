@@ -82,7 +82,8 @@ fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewMode
             MainTab.LIST -> ListScreen(
                 viewModel = listViewModel,
                 onItemClick = { item -> onOpenDetails(item.id) },
-                modifier = Modifier.padding(padding)
+                modifier = Modifier.padding(padding),
+                windowSizeClass = windowSizeClass
             )
             MainTab.GRID -> GridScreen(
                 viewModel = listViewModel,

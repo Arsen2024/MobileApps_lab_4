@@ -9,7 +9,10 @@ fun DiaryEntity.toDiaryItem(): DiaryItem {
         title = title,
         description = description,
         isFavorite = isFavorite,
-        createdAt = createdAt
+        createdAt = createdAt,
+        priority = priority,
+        category = category,
+        mood = mood
     )
 }
 
@@ -19,7 +22,10 @@ fun DiaryItem.toDiaryEntity(): DiaryEntity {
         title = title,
         description = description,
         isFavorite = isFavorite,
-        createdAt = createdAt
+        createdAt = createdAt,
+        priority = priority,
+        category = category,
+        mood = mood
     )
 }
 
@@ -29,7 +35,10 @@ fun DiaryDto.toEntity(): DiaryEntity {
         title = title,
         description = description,
         isFavorite = isFavorite,
-        createdAt = createdAt
+        createdAt = createdAt,
+        priority = priority,
+        category = category,
+        mood = mood
     )
 }
 
@@ -39,6 +48,9 @@ fun DiaryEntity.toDto(): DiaryDto {
         title = title,
         description = description,
         isFavorite = isFavorite,
-        createdAt = createdAt
+        createdAt = createdAt,
+        priority = priority,
+        category = category,
+        mood = mood
     )
 }

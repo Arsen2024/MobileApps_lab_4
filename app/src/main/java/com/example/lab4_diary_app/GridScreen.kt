@@ -107,7 +107,7 @@ private fun DiaryGridContent(
     }
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(160.dp),
         modifier = Modifier.padding(16.dp)
     ) {
         items(sortedItems) { item ->
@@ -138,6 +138,12 @@ private fun DiaryGridContent(
                         )
                     }
                     Text(item.description)
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Text("Пріоритет: ${item.priority}")
+                    Text("Категорія: ${item.category}")
+                    Text("Настрій: ${item.mood}")
                 }
             }
         }

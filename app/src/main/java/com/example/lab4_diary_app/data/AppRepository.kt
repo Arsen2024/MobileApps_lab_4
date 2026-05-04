@@ -49,7 +49,10 @@ class AppRepository(private val diaryDao: DiaryDao, private val api: DiaryApi) {
             title = item.title,
             description = item.description,
             isFavorite = !item.isFavorite,
-            createdAt = item.createdAt
+            createdAt = item.createdAt,
+            priority = item.priority,
+            category = item.category,
+            mood = item.mood
         )
 
         api.updateEntry(item.id, updated)

@@ -5,5 +5,8 @@ data class DiaryItem(
     val title: String,
     val description: String,
     val isFavorite: Boolean,
-    val createdAt: Long
+    val createdAt: Long,
+    val priority: Int,
+    val category: String,
+    val mood: Int
 )

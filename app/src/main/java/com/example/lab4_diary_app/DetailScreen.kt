@@ -17,7 +17,7 @@ import com.example.lab4_diary_app.viewmodel.DetailViewModel
 import com.example.lab4_diary_app.viewmodel.DetailViewModelFactory
 
 @Composable
-fun DetailScreen(itemId: String, repository: AppRepository) {
+fun DetailScreen(itemId: String, repository: AppRepository, modifier: Modifier = Modifier) {
     val viewModel: DetailViewModel = viewModel(
         factory = DetailViewModelFactory(repository, itemId)
     )
