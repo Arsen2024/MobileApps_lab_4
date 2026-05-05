@@ -225,27 +225,33 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
 
             Spacer(Modifier.height(8.dp))
 
-            Text("Категорія")
 
-            Button(onClick = { expanded = true }) {
-                Text(category.ifBlank { "Оберіть" })
+            Box {
+                Column {
+
+                Text("Категорія")
+
+                Button(onClick = { expanded = true }) {
+                    Text(category.ifBlank { "Оберіть" })
+                }
             }
 
-            categoryError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                categoryError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
 
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                categories.forEach {
-                    DropdownMenuItem(
-                        text = { Text(it) },
-                        onClick = {
-                            category = it
-                            categoryError = null
-                            expanded = false
-                        }
-                    )
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    categories.forEach {
+                        DropdownMenuItem(
+                            text = { Text(it) },
+                            onClick = {
+                                category = it
+                                categoryError = null
+                                expanded = false
+                            }
+                        )
+                    }
                 }
             }
 

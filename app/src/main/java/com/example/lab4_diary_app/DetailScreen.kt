@@ -1,13 +1,34 @@
 package com.example.lab4_diary_app
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,6 +44,21 @@ fun DetailScreen(itemId: String, repository: AppRepository, modifier: Modifier =
     )
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    var expanded by remember { mutableStateOf(false) }
+
+    val rotation by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        animationSpec = tween(500)
+    )
+
+    val headerColor by animateColorAsState(
+        targetValue = if (expanded)
+            MaterialTheme.colorScheme.primaryContainer
+        else
+            MaterialTheme.colorScheme.surfaceVariant,
+        animationSpec = tween(500)
+    )
 
     when (state) {
         DetailState.Loading -> {
@@ -79,6 +115,50 @@ fun DetailScreen(itemId: String, repository: AppRepository, modifier: Modifier =
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                        .clickable { expanded = !expanded },
+                    colors = CardDefaults.cardColors(containerColor = headerColor)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Додаткова інформація",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Spacer(Modifier.weight(1f))
+
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = null,
+                            modifier = Modifier.rotate(rotation)
+                        )
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = expanded,
+                    enter = expandVertically(tween(500)) + fadeIn(tween(500)),
+                    exit = shrinkVertically(tween(500)) + fadeOut(tween(500))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text("Пріоритет: ${item.priority}")
+                        Text("Категорія: ${item.category}")
+                        Text("Настрій: ${item.mood}")
+                        Text("Обране: ${if (item.isFavorite) "Так" else "Ні"}")
+                    }
+                }
             }
         }
 

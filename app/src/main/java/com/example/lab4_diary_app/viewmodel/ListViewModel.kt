@@ -8,6 +8,7 @@ import com.example.lab4_diary_app.data.DiaryItem
 import com.example.lab4_diary_app.data.preferences.UserPreferencesRepository
 import com.example.lab4_diary_app.network.DiaryDto
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -40,6 +41,9 @@ class ListViewModel(val repository: AppRepository, private val preferences: User
 
     private val _deletingIds = MutableStateFlow<Set<String>>(emptySet())
     val deletingIds: StateFlow<Set<String>> = _deletingIds
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
     private var isOffline = false
 
@@ -146,6 +150,18 @@ class ListViewModel(val repository: AppRepository, private val preferences: User
             } finally {
                 _deletingIds.value -= id
             }
+        }
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+
+            delay(1200)
+
+            repository.refresh()
+
+            _isRefreshing.value = false
         }
     }
 }
