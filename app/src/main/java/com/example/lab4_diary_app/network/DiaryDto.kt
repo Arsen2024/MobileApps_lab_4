@@ -8,5 +8,6 @@ data class DiaryDto(
     val createdAt: Long,
     val priority: Int,
     val category: String,
-    val mood: Int
+    val mood: Int,
+    val photoUri: String?
 )

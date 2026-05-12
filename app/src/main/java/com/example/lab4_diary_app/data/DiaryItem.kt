@@ -8,5 +8,10 @@ data class DiaryItem(
     val createdAt: Long,
     val priority: Int,
     val category: String,
-    val mood: Int
+    val mood: Int,
+    val photoUri: String?,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val accuracy: Float? = null,
+    val locationTime: Long? = null,
 )

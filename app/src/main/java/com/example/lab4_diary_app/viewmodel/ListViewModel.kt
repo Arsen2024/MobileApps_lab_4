@@ -109,7 +109,7 @@ class ListViewModel(val repository: AppRepository, private val preferences: User
         }
     }
 
-    fun addItem(title: String, description: String, isFavorite: Boolean, priority: Int, category: String, mood: Int) {
+    fun addItem(title: String, description: String, isFavorite: Boolean, priority: Int, category: String, mood: Int, photoUri: String?) {
         viewModelScope.launch {
             try {
                 repository.addRemote(
@@ -121,7 +121,8 @@ class ListViewModel(val repository: AppRepository, private val preferences: User
                         createdAt = System.currentTimeMillis(),
                         priority = priority,
                         category = category,
-                        mood = mood
+                        mood = mood,
+                        photoUri = photoUri
                     )
                 )
 

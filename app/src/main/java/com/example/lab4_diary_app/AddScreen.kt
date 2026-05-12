@@ -293,7 +293,8 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
                             isFavorite = isFavorite,
                             priority = priority.toIntOrNull() ?: 0,
                             category = category,
-                            mood = mood.toInt()
+                            mood = mood.toInt(),
+                            photoUri = null
                         )
                     }
                 },

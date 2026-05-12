@@ -12,7 +12,12 @@ fun DiaryEntity.toDiaryItem(): DiaryItem {
         createdAt = createdAt,
         priority = priority,
         category = category,
-        mood = mood
+        mood = mood,
+        photoUri = photoUri,
+        latitude = latitude,
+        longitude = longitude,
+        accuracy = accuracy,
+        locationTime = locationTime
     )
 }
 
@@ -25,7 +30,12 @@ fun DiaryItem.toDiaryEntity(): DiaryEntity {
         createdAt = createdAt,
         priority = priority,
         category = category,
-        mood = mood
+        mood = mood,
+        photoUri = photoUri,
+        latitude = latitude,
+        longitude = longitude,
+        accuracy = accuracy,
+        locationTime = locationTime
     )
 }
 
@@ -38,7 +48,8 @@ fun DiaryDto.toEntity(): DiaryEntity {
         createdAt = createdAt,
         priority = priority,
         category = category,
-        mood = mood
+        mood = mood,
+        photoUri = null
     )
 }
 
@@ -51,6 +62,7 @@ fun DiaryEntity.toDto(): DiaryDto {
         createdAt = createdAt,
         priority = priority,
         category = category,
-        mood = mood
+        mood = mood,
+        photoUri = null
     )
 }
