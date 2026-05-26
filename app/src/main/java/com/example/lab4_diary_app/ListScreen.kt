@@ -54,6 +54,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -328,6 +331,9 @@ private fun DiaryListContent(
                                 modifier = Modifier
                                     .align(Alignment.CenterEnd)
                                     .padding(end = 24.dp)
+                                    .semantics {
+                                        contentDescription = "Зона видалення елемента"
+                                    }
                             )
                         }
 
@@ -336,6 +342,10 @@ private fun DiaryListContent(
                                 .fillMaxWidth()
                                 .padding(8.dp)
                                 .offset { IntOffset(offsetX.roundToInt(), 0) }
+                                .semantics(mergeDescendants = true) {
+                                    contentDescription =
+                                        "Запис: ${item.title}. ${item.description}."
+                                }
                                 .pointerInput(Unit) {
                                     detectHorizontalDragGestures(
                                         onDragEnd = {
@@ -367,6 +377,11 @@ private fun DiaryListContent(
                                             .padding(start = 8.dp)
                                             .clickable {
                                                 viewModel.toggleFavorite(item)
+                                            }
+                                            .semantics {
+                                                contentDescription =
+                                                    if (item.isFavorite) "Видалити з обраного" else "Додати до обраного"
+                                                role = androidx.compose.ui.semantics.Role.Button
                                             }
                                     )
                                 }

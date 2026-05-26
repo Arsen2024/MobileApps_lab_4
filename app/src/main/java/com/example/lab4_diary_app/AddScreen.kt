@@ -40,6 +40,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.lab4_diary_app.viewmodel.ListViewModel
 import com.example.lab4_diary_app.viewmodel.UiEvent
@@ -161,6 +164,7 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .testTag("titleField")
                     .focusRequester(titleFocus)
                     .onFocusChanged {
                         if (titleFocused && !it.isFocused) validate()
@@ -184,6 +188,7 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .testTag("descriptionField")
                     .focusRequester(descriptionFocus)
                     .onFocusChanged {
                         if (descFocused && !it.isFocused) validate()
@@ -209,6 +214,7 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
                 },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .testTag("priorityField")
                     .focusRequester(priorityFocus)
                     .onFocusChanged {
                         if (priorityFocused && !it.isFocused) validate()
@@ -226,12 +232,23 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
             Spacer(Modifier.height(8.dp))
 
 
-            Box {
+            Box(
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = "Категорія. Поточне значення: $category"
+                }
+            ) {
                 Column {
 
                 Text("Категорія")
 
-                Button(onClick = { expanded = true }) {
+                Button(
+                    onClick = { expanded = true },
+                    modifier = Modifier
+                        .testTag("categoryButton")
+                        .semantics {
+                            contentDescription = "Натисніть щоб відкрити DropdownMenu"
+                        }
+                ) {
                     Text(category.ifBlank { "Оберіть" })
                 }
             }
@@ -259,27 +276,43 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
 
             Text("Додаткові параметри", style = MaterialTheme.typography.titleMedium)
 
-            Row {
+            Row(
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = "Поміняйте статус з правої сторони екрану"
+                }
+            ) {
                 Text("Обране")
                 Spacer(Modifier.weight(1f))
                 Switch(
                     checked = isFavorite,
-                    onCheckedChange = { isFavorite = it }
+                    onCheckedChange = { isFavorite = it },
+                    modifier = Modifier
+                        .testTag("favoriteSwitch")
+                        .semantics {
+                            contentDescription = if (isFavorite) "Видалити з обраного" else "Додати до обраного"
+                        }
                 )
             }
 
             Spacer(Modifier.height(8.dp))
 
-            Text("Настрій: ${mood.toInt()}")
+            Column(
+                modifier = Modifier.semantics(mergeDescendants = true) {
+                    contentDescription = "Настрій: ${mood.toInt()} з 10"
+                }
+            ) {
+                Text("Настрій: ${mood.toInt()}")
 
-            Slider(
-                value = mood,
-                onValueChange = {
-                    mood = it
-                    validate()
-                },
-                valueRange = 1f..10f
-            )
+                Slider(
+                    value = mood,
+                    onValueChange = {
+                        mood = it
+                        validate()
+                    },
+                    valueRange = 1f..10f,
+                    modifier = Modifier.testTag("moodSlider")
+                )
+            }
 
             moodError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
 
@@ -305,7 +338,9 @@ fun AddScreen(viewModel: ListViewModel, onBack: () -> Unit, windowSizeClass: Win
                             categoryError == null &&
                             moodError == null &&
                             title.isNotBlank() && description.isNotBlank() && !isLoading,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("saveButton")
             ) {
                 if (isLoading) {
                     Text("Збереження...")

@@ -22,6 +22,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.navigation.NavController
 import com.example.lab4_diary_app.routes.Screen
 import com.example.lab4_diary_app.viewmodel.ListViewModel
@@ -49,7 +51,10 @@ fun MainScreen(settingsViewModel: SettingsViewModel, listViewModel: ListViewMode
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate(Screen.Add.route) }
+                onClick = { navController.navigate(Screen.Add.route) },
+                modifier = Modifier.semantics {
+                    contentDescription = "Додати новий запис"
+                }
             ) {
                 Text("+")
             }
